@@ -1,0 +1,110 @@
+# Copyright 2014 Ron Economos
+#
+# This file is part of gr-dvbt2
+#
+# gr-dvbt2 is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3, or (at your option)
+# any later version.
+#
+# gr-dvbt2 is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with gr-dvbt2; see the file COPYING.  If not, write to
+# the Free Software Foundation, Inc., 51 Franklin Street,
+# Boston, MA 02110-1301, USA.
+
+gr-dvbt2
+======
+
+Author: Ron Economos
+Email: <w6rz@comcast.net>
+
+The goal of this project is to build a software-defined DVB-T2
+transmitter, based on the EN 302 755 V1.3.1 Frame structure
+channel coding and modulation for a second generation digital
+terrestrial television broadcasting system (DVB-T2):
+
+http://www.etsi.org/deliver/etsi_en/302700_302799/302755/01.03.01_60/en_302755v010301p.pdf
+
+The baseband framing, baseband scrambling, LDPC (low density
+parity check) and BCH (Bose, Chaudhuri, Hocquenghem) blocks
+are reused from gr-dvbs2 (https://github.com/drmpeg/gr-dvbs2)
+which are originally from G4GUO's DATV-Express Digital Amateur
+Television project. The bit interleaver, DVB-T2 modulator,
+cell and time interleaver, frame mapper, frequency interleaver,
+pilot generator, P1 symbol insertion, Tone Reservation PAPR and
+MISO processing blocks are all new.
+
+The baseline implementation has been verified against the BBC
+test streams available here:
+
+ftp://ftp.kw.bbc.co.uk/t2refs/
+
+Currently, the implementation is bit perfect with the VV001-CR35,
+VV003-CR23, VV004-8KFFT, VV005-8KFFT, VV007-16KFFT, VV008-16FFT,
+VV009-4KFFT, VV010-2KFFT, VV011-1KFFT, VV012-64QAM45, VV014-64QAM34,
+VV015-8KFFT, VV016-256QAM34, VV018-MISO, VV019-NOROT and VV034-DTG016
+profiles. The VV003-CR23 profile is the current HD broadcast mode
+(32K/256QAM at 40.2 Mbps or Ofcom Mode 7) in the UK.
+
+Test streams for the VV003-CR23, VV009-4KFFT and VV018-MISO profiles
+with an 8 MHz channel are available.
+
+http://www.w6rz.net/adv32k256qam.ts
+
+http://www.w6rz.net/adv4k64qam.ts
+
+http://www.w6rz.net/adv32kmiso.ts
+
+A stand-alone Python script (dvbt2-blade.py) is included for the
+bladeRF SDR and matches the VV009-4KFFT profile and test stream.
+
+IMPORTANT: The tone reservation PAPR block is very floating point
+intensive and only runs in real-time on the VV016-256QAM34 profile.
+
+Version 1.1.1 features not implemented:
+
+1) Generic Encapsulated Stream (GSE)
+2) Generic Continuous Stream (GCS)
+3) Generic Fixed-length Packetized Stream (GFPS)
+4) Input Stream Synchronization
+5) Null Packet Deletion
+6) In-band signalling Type A
+7) Active Constellation Extension (ACE) PAPR
+8) Time interleaver type 2
+9) Common PLP
+10) Multiple PLP
+11) Type 2 PLP
+12) Auxiliary streams
+13) FEF
+14) Sub-slices
+
+Version 1.3.1 features not implemented:
+
+1) L1-ACE
+2) Bias balancing cells
+
+Build instructions:
+
+    mkdir build
+    cd build
+    cmake ../
+    make
+    sudo make install
+    sudo ldconfig
+
+IMPORTANT: Because some of the blocks have to process entire
+T2 frames, the shared memory requirement will be greater than
+the Linux default. The size of shared memory can be increased
+with the following shell commands:
+
+    sudo -i
+    echo $(( 1024 * 1024 * 1024 )) > /proc/sys/kernel/shmmax
+    logout
+
+Contributions are welcome!
+

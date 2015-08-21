@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<block>
+  <name>Spectrum Painter</name>
+  <key>paint_paint_bc</key>
+  <category>Paint</category>
+  <import>import paint</import>
+  <make>paint.paint_bc($width, $repeats)</make>
+  <param>
+    <name>Image Width</name>
+    <key>width</key>
+    <value>1920</value>
+    <type>int</type>
+  </param>
+  <param>
+    <name>Line Repeats</name>
+    <key>repeats</key>
+    <value>8</value>
+    <type>int</type>
+  </param>
+  <sink>
+    <name>in</name>
+    <type>byte</type>
+  </sink>
+  <source>
+    <name>out</name>
+    <type>complex</type>
+  </source>
+</block>
