@@ -1649,7 +1649,7 @@
     </param>
     <param>
       <key>repeats</key>
-      <value>16</value>
+      <value>8</value>
     </param>
     <param>
       <key>maxoutbuf</key>
