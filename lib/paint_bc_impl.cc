@@ -88,8 +88,7 @@ namespace gr {
         gr_complex zero;
         gr_complex *dst;
 
-        zero.real() = 0.0;
-        zero.imag() = 0.0;
+        zero = gr_complex(0.0, 0.0);
 
         for (int i = 0; i < noutput_items; i += (ofdm_fft_size * line_repeat))
         {
@@ -105,8 +104,7 @@ namespace gr {
                 magnitude += 256.0;
                 magnitude = pow(magnitude, 5.0);
                 magnitude /= 10000000000.0;
-                m_point[0].real() = (magnitude * cos(angle * M_PI / (RAND_MAX / 2)));
-                m_point[0].imag() = (magnitude * sin(angle * M_PI / (RAND_MAX / 2)));
+                m_point[0] = gr_complex((magnitude * cos(angle * M_PI / (RAND_MAX / 2))), (magnitude * sin(angle * M_PI / (RAND_MAX / 2))));
                 for (int repeat = 0; repeat < pixel_repeat; repeat++)
                 {
                     *out++ = m_point[0];
