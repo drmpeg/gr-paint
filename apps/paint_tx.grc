@@ -85,6 +85,33 @@
     </param>
     <param>
       <key>_coordinate</key>
+      <value>(8, 155)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>frequency</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>915000000</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
       <value>(8, 83)</value>
     </param>
     <param>
@@ -234,7 +261,7 @@
     </param>
     <param>
       <key>freq0</key>
-      <value>429000000</value>
+      <value>frequency</value>
     </param>
     <param>
       <key>gain_mode0</key>
@@ -1502,7 +1529,7 @@
     </param>
     <param>
       <key>args</key>
-      <value>bladerf=0,buffers=128,buflen=32768,verbosity=debug</value>
+      <value>bladerf=0,buffers=128,buflen=32768</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -1672,7 +1699,7 @@
     </param>
     <param>
       <key>fc</key>
-      <value>429000000</value>
+      <value>frequency</value>
     </param>
     <param>
       <key>comment</key>
@@ -1891,7 +1918,7 @@
     </param>
     <param>
       <key>fc</key>
-      <value>429000000</value>
+      <value>frequency</value>
     </param>
     <param>
       <key>comment</key>
@@ -2114,7 +2141,7 @@
     </param>
     <param>
       <key>center_freq0</key>
-      <value>429000000</value>
+      <value>frequency</value>
     </param>
     <param>
       <key>norm_gain0</key>
