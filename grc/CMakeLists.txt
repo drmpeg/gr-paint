@@ -18,5 +18,6 @@
 # Boston, MA 02110-1301, USA.
 
 install(FILES
-    paint_paint_bc.xml DESTINATION share/gnuradio/grc/blocks
+    paint_paint_bc.xml
+    paint_image_source.xml DESTINATION share/gnuradio/grc/blocks
 )
