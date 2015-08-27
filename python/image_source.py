@@ -31,7 +31,7 @@ class image_source(gr.sync_block):
 	Given an image file readable by Python-Imaging, this block produces
 	monochrome lines suitable for input to spectrum_paint
 	"""
-	def __init__(self, image_file, image_flip=False, image_invert=False, autocontrast=False):
+	def __init__(self, image_file, image_flip=False, bt709_map=True, image_invert=False, autocontrast=False):
 		gr.sync_block.__init__(self,
 			name="image_source",
 			in_sig=None,
@@ -62,6 +62,9 @@ class image_source(gr.sync_block):
 		self.set_output_multiple(self.image_width)
 
 		self.image_data = list(im.getdata())
+		if bt709_map:
+			# scale brightness according to ITU-R BT.709
+			self.image_data = map( lambda x: x * 219 / 255 + 16,  self.image_data)
 		self.image_len = len(self.image_data)
 		print "paint.image_source: %d bytes, %dpx width" % (self.image_len, self.image_width)
 		self.line_num = 0
