@@ -76,6 +76,13 @@ QT GUI Waterfall Sink.
 3) xhatch.bin This is a 1920x1080 test pattern with circles. Used to set
 the aspect ratio correctly.
 
+UPDATE: Chris Kuethe KJ6GVE has submitted an "Image File Source" block
+that allows any image format to be used and avoids the extra steps of
+using ImageMagick and tgatoluma. The flow graph has been updated to include
+the new block and a test PNG image is provided. You still have to enter
+the correct image width into the Spectrum Painter block (the Image File
+Source block will print the image width for you).
+
 Build instructions:
 
     mkdir build
