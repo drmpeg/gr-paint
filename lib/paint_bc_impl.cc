@@ -84,6 +84,9 @@ namespace gr {
         const unsigned char *in = (const unsigned char *) input_items[0];
         gr_complex *out = (gr_complex *) output_items[0];
         int consumed = 0;
+        int pixel_index;
+        int angle_index;
+        int pixels;
         float angle, magnitude;
         gr_complex zero;
         gr_complex *dst;
@@ -92,35 +95,50 @@ namespace gr {
 
         for (int i = 0; i < noutput_items; i += (ofdm_fft_size * line_repeat))
         {
-            for (int j = 0; j < left_nulls; j++)
-            {
-                *out++ = zero;
-            }
+            pixel_index = 0;
             for (int j = 0; j < image_width; j++)
             {
-                angle = rand();
-                angle = angle - (RAND_MAX / 2);
                 magnitude = in[consumed++];
                 magnitude += 256.0;
                 magnitude = pow(magnitude, 5.0);
                 magnitude /= 10000000000.0;
-                m_point[0] = gr_complex((magnitude * cos(angle * M_PI / (RAND_MAX / 2))), (magnitude * sin(angle * M_PI / (RAND_MAX / 2))));
-                for (int repeat = 0; repeat < pixel_repeat; repeat++)
+                for (int k = 0; k < pixel_repeat; k++)
                 {
-                    *out++ = m_point[0];
+                    magnitude_line[pixel_index++] = magnitude;
                 }
             }
-            for (int j = 0; j < right_nulls; j++)
+            for (int lrepeat = 0; lrepeat < line_repeat; lrepeat++)
             {
-                *out++ = zero;
-            }
-            out -= ofdm_fft_size;
-            dst = ofdm_fft->get_inbuf();
-            memcpy(&dst[ofdm_fft_size / 2], &out[0], sizeof(gr_complex) * ofdm_fft_size / 2);
-            memcpy(&dst[0], &out[ofdm_fft_size / 2], sizeof(gr_complex) * ofdm_fft_size / 2);
-            ofdm_fft->execute();
-            for (int repeat = 0; repeat < line_repeat; repeat++)
-            {
+                for (int j = 0; j < left_nulls; j++)
+                {
+                    *out++ = zero;
+                }
+                angle_index = 0;
+                for (int j = 0; j < image_width; j++)
+                {
+                    for (int prepeat = 0; prepeat < pixel_repeat; prepeat++)
+                    {
+                        angle = rand();
+                        angle = angle - (RAND_MAX / 2);
+                        angle_line[angle_index++] = angle * M_PI / (RAND_MAX / 2);
+                    }
+                }
+                pixels = image_width * pixel_repeat;
+                volk_32f_cos_32f(angle_cos, angle_line, pixels);
+                volk_32f_sin_32f(angle_sin, angle_line, pixels);
+                volk_32f_x2_multiply_32f(angle_cos, angle_cos, magnitude_line, pixels);
+                volk_32f_x2_multiply_32f(angle_sin, angle_sin, magnitude_line, pixels);
+                volk_32f_x2_interleave_32fc(out, angle_cos, angle_sin, pixels);
+                out += pixels;
+                for (int j = 0; j < right_nulls; j++)
+                {
+                    *out++ = zero;
+                }
+                out -= ofdm_fft_size;
+                dst = ofdm_fft->get_inbuf();
+                memcpy(&dst[ofdm_fft_size / 2], &out[0], sizeof(gr_complex) * ofdm_fft_size / 2);
+                memcpy(&dst[0], &out[ofdm_fft_size / 2], sizeof(gr_complex) * ofdm_fft_size / 2);
+                ofdm_fft->execute();
                 volk_32fc_s32fc_multiply_32fc(out, ofdm_fft->get_outbuf(), normalization, ofdm_fft_size);
                 out += ofdm_fft_size;
             }

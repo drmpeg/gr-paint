@@ -39,6 +39,10 @@ namespace gr {
       fft::fft_complex *ofdm_fft;
       int ofdm_fft_size;
       float normalization;
+      float magnitude_line[4096];
+      float angle_line[4096];
+      float angle_cos[4096];
+      float angle_sin[4096];
 
      public:
       paint_bc_impl(int width, int repeats);
