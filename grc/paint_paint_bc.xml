@@ -17,6 +17,7 @@
     <value>8</value>
     <type>int</type>
   </param>
+  <check>$width &lt; 4097</check>
   <sink>
     <name>in</name>
     <type>byte</type>
