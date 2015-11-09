@@ -31,22 +31,26 @@ namespace gr {
   namespace paint {
 
     paint_bc::sptr
-    paint_bc::make(int width, int repeats)
+    paint_bc::make(int width, int repeats, int equalization, int randomsrc, int inputs)
     {
       return gnuradio::get_initial_sptr
-        (new paint_bc_impl(width, repeats));
+        (new paint_bc_impl(width, repeats, equalization, randomsrc, inputs));
     }
 
     /*
      * The private constructor
      */
-    paint_bc_impl::paint_bc_impl(int width, int repeats)
+    paint_bc_impl::paint_bc_impl(int width, int repeats, int equalization, int randomsrc, int inputs)
       : gr::block("paint_bc",
-              gr::io_signature::make(1, 1, sizeof(unsigned char)),
+              gr::io_signature::make(inputs, inputs, sizeof(unsigned char)),
               gr::io_signature::make(1, 1, sizeof(gr_complex)))
     {
+        double x, sinc, fs = 2000000.0;
+        double fstep, f = 0.0;
         line_repeat = repeats;
         image_width = width;
+        random_source = randomsrc;
+        equalization_enable = equalization;
         ofdm_fft_size = 4096;
         ofdm_fft = new fft::fft_complex(ofdm_fft_size, false, 1);
         normalization = 0.000001;
@@ -57,6 +61,24 @@ namespace gr {
         if (nulls % 2 == 1)
         {
             left_nulls++;
+        }
+        fstep = fs / ofdm_fft_size;
+        for (int i = 0; i < ofdm_fft_size / 2; i++)
+        {
+            x = M_PI * f / fs;
+            if (i == 0)
+            {
+                sinc = 1.0;
+            }
+            else
+            {
+                sinc = sin(x) / x;
+            }
+            inverse_sinc[i + (ofdm_fft_size / 2)].real() = 1.0 / sinc;
+            inverse_sinc[i + (ofdm_fft_size / 2)].imag() = 0.0;
+            inverse_sinc[(ofdm_fft_size / 2) - i - 1].real() = 1.0 / sinc;
+            inverse_sinc[(ofdm_fft_size / 2) - i - 1].imag() = 0.0;
+            f = f + fstep;
         }
         set_output_multiple(ofdm_fft_size * line_repeat);
     }
@@ -73,6 +95,10 @@ namespace gr {
     paint_bc_impl::forecast (int noutput_items, gr_vector_int &ninput_items_required)
     {
         ninput_items_required[0] = (noutput_items * (image_width / line_repeat)) / ofdm_fft_size;
+        if (random_source == EXTERNAL)
+        {
+            ninput_items_required[1] = (noutput_items / ofdm_fft_size) * image_width * pixel_repeat;
+        }
     }
 
     int
@@ -82,8 +108,10 @@ namespace gr {
                        gr_vector_void_star &output_items)
     {
         const unsigned char *in = (const unsigned char *) input_items[0];
+        const unsigned char *in_rand = (const unsigned char *) input_items[1];
         gr_complex *out = (gr_complex *) output_items[0];
         int consumed = 0;
+        int consumed_rand = 0;
         int pixel_index;
         int angle_index;
         int pixels;
@@ -118,9 +146,17 @@ namespace gr {
                 {
                     for (int prepeat = 0; prepeat < pixel_repeat; prepeat++)
                     {
-                        angle = rand();
-                        angle = angle - (RAND_MAX / 2);
-                        angle_line[angle_index++] = angle * M_PI / (RAND_MAX / 2);
+                        if (random_source == INTERNAL)
+                        {
+                            angle = rand();
+                            angle = angle - (RAND_MAX / 2);
+                            angle_line[angle_index++] = angle * M_PI / (RAND_MAX / 2);
+                        }
+                        else
+                        {
+                            angle = (in_rand[consumed_rand++] << 1) + 1;
+                            angle_line[angle_index++] = angle * M_PI / 4.0;
+                        }
                     }
                 }
                 pixels = image_width * pixel_repeat;
@@ -135,6 +171,10 @@ namespace gr {
                     *out++ = zero;
                 }
                 out -= ofdm_fft_size;
+                if (equalization_enable == EQUALIZATION_ON)
+                {
+                    volk_32fc_x2_multiply_32fc(out, out, inverse_sinc, ofdm_fft_size);
+                }
                 dst = ofdm_fft->get_inbuf();
                 memcpy(&dst[ofdm_fft_size / 2], &out[0], sizeof(gr_complex) * ofdm_fft_size / 2);
                 memcpy(&dst[0], &out[ofdm_fft_size / 2], sizeof(gr_complex) * ofdm_fft_size / 2);
@@ -145,7 +185,11 @@ namespace gr {
         }
         // Tell runtime system how many input items we consumed on
         // each input stream.
-        consume_each (consumed);
+        consume (0, consumed);
+        if (random_source == EXTERNAL)
+        {
+            consume (1, consumed_rand);
+        }
 
         // Tell runtime system how many output items we produced.
         return noutput_items;

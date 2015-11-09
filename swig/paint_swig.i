@@ -9,8 +9,10 @@
 
 %{
 #include "paint/paint_bc.h"
+#include "paint/paint_config.h"
 %}
 
 
 %include "paint/paint_bc.h"
+%include "paint/paint_config.h"
 GR_SWIG_BLOCK_MAGIC2(paint, paint_bc);

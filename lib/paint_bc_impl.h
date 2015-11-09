@@ -35,6 +35,8 @@ namespace gr {
       int pixel_repeat;
       int left_nulls;
       int right_nulls;
+      int random_source;
+      int equalization_enable;
       gr_complex m_point[1];
       fft::fft_complex *ofdm_fft;
       int ofdm_fft_size;
@@ -43,9 +45,10 @@ namespace gr {
       float angle_line[4096];
       float angle_cos[4096];
       float angle_sin[4096];
+      gr_complex inverse_sinc[4096];
 
      public:
-      paint_bc_impl(int width, int repeats);
+      paint_bc_impl(int width, int repeats, int equalization, int randomsrc, int inputs);
       ~paint_bc_impl();
 
       // Where all the action really happens

@@ -18,40 +18,26 @@
  * Boston, MA 02110-1301, USA.
  */
 
-
-#ifndef INCLUDED_PAINT_PAINT_BC_H
-#define INCLUDED_PAINT_PAINT_BC_H
-
-#include <paint/api.h>
-#include <paint/paint_config.h>
-#include <gnuradio/block.h>
+#ifndef INCLUDED_PAINT_CONFIG_H
+#define INCLUDED_PAINT_CONFIG_H
 
 namespace gr {
   namespace paint {
+    enum paint_random_t {
+      INTERNAL = 0,
+      EXTERNAL,
+    };
 
-    /*!
-     * \brief <+description of block+>
-     * \ingroup paint
-     *
-     */
-    class PAINT_API paint_bc : virtual public gr::block
-    {
-     public:
-      typedef boost::shared_ptr<paint_bc> sptr;
-
-      /*!
-       * \brief Return a shared_ptr to a new instance of paint::paint_bc.
-       *
-       * To avoid accidental use of raw pointers, paint::paint_bc's
-       * constructor is in a private implementation
-       * class. paint::paint_bc::make is the public interface for
-       * creating new instances.
-       */
-      static sptr make(int width, int repeats, int equalization, int randomsrc, int inputs);
+    enum paint_equalization_t {
+      EQUALIZATION_OFF = 0,
+      EQUALIZATION_ON,
     };
 
   } // namespace paint
 } // namespace gr
 
-#endif /* INCLUDED_PAINT_PAINT_BC_H */
+typedef gr::paint::paint_random_t paint_random_t;
+typedef gr::paint::paint_equalization_t paint_equalization_t;
+
+#endif /* INCLUDED_PAINT_CONFIG_H */
 

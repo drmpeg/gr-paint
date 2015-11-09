@@ -1829,7 +1829,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(368, 331)</value>
+      <value>(368, 323)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1854,6 +1854,14 @@
     <param>
       <key>minoutbuf</key>
       <value>0</value>
+    </param>
+    <param>
+      <key>randomsrc</key>
+      <value>INTERNAL</value>
+    </param>
+    <param>
+      <key>equalization</key>
+      <value>EQUALIZATION_OFF</value>
     </param>
   </block>
   <block>
