@@ -30,15 +30,18 @@ int main(int argc, char **argv)
     FILE    *fpout;
     int    length, i, j, horz, vert, index = 0;
     int    vertical_flip = TRUE;
-    int    r, g, b;
+    int    black_white;
+    int    image_ident;
+    int    bits_pixel;
+    int    r, g, b, alpha;
     double    y;
     double    cr, cg, cb;
     unsigned char    *yp;
     int    matrix_coefficients = 1;
-    unsigned int    py;
-    static unsigned char    buffer_422output[3840 * 2160 * 2];
-    static unsigned char    buffer_444Y[3840 * 2160];
-    static unsigned char    buffer_444input[3840 * 2160 * 3];
+    static unsigned char    buffer_header[18];
+    unsigned char    *buffer_ident;
+    unsigned char    *buffer_444Y;
+    unsigned char    *buffer_444input;
     static double coef[8][3] = {
         {0.2126, 0.7152, 0.0722},   /* ITU-R Rec. 709 */
         {0.299, 0.587, 0.114},      /* unspecified */
@@ -68,67 +71,155 @@ int main(int argc, char **argv)
         exit(-1);
     }
 
-    length = fread(&buffer_444input[0], 1, 18, fp);
+    length = fread(&buffer_header[0], 1, 18, fp);
     if (length != 18) {
         fprintf(stderr, "Length Error reading input file <%s>\n", argv[1]);
         exit(-1);
     }
 
-    horz = buffer_444input[13] << 8;
-    horz |= buffer_444input[12];
-    vert = buffer_444input[15] << 8;
-    vert |= buffer_444input[14];
+    image_ident = buffer_header[0];
+    bits_pixel = buffer_header[16];
+
+    horz = buffer_header[13] << 8;
+    horz |= buffer_header[12];
+    vert = buffer_header[15] << 8;
+    vert |= buffer_header[14];
     printf("horz = %d, vert = %d\n", horz, vert);
 
-    if (buffer_444input[17] & 0x20)
+    if (buffer_header[17] & 0x20)
     {
         vertical_flip = FALSE;
     }
-    length = fread(&buffer_444input[0], 1, (horz * vert * 3), fp);
-    if (length != (horz * vert * 3)) {
-        fprintf(stderr, "Length Error reading input file <%s>\n", argv[1]);
-        exit(-1);
+
+    if (image_ident != 0) {
+        buffer_ident = (unsigned char *)malloc(image_ident);
+        length = fread(&buffer_ident[0], 1, image_ident, fp);
+        if (length != image_ident) {
+            free(buffer_ident);
+            fprintf(stderr, "Length Error reading input file <%s>\n", argv[1]);
+            exit(-1);
+        }
+        free(buffer_ident);
     }
+
+    if (buffer_header[2] == 0x3)
+    {
+        black_white = TRUE;
+        buffer_444input = (unsigned char *)malloc(horz * vert);
+        length = fread(&buffer_444input[0], 1, (horz * vert), fp);
+        if (length != (horz * vert)) {
+            free(buffer_444input);
+            fprintf(stderr, "Length Error reading input file <%s>\n", argv[1]);
+            exit(-1);
+        }
+    }
+    else
+    {
+        black_white = FALSE;
+        if (bits_pixel == 32) {
+            buffer_444input = (unsigned char *)malloc(horz * vert * 4);
+            length = fread(&buffer_444input[0], 1, (horz * vert * 4), fp);
+            if (length != (horz * vert * 4)) {
+                free(buffer_444input);
+                fprintf(stderr, "Length Error reading input file <%s>\n", argv[1]);
+                exit(-1);
+            }
+        }
+        else {
+            buffer_444input = (unsigned char *)malloc(horz * vert * 3);
+            length = fread(&buffer_444input[0], 1, (horz * vert * 3), fp);
+            if (length != (horz * vert * 3)) {
+                free(buffer_444input);
+                fprintf(stderr, "Length Error reading input file <%s>\n", argv[1]);
+                exit(-1);
+            }
+        }
+    }
+
+    buffer_444Y = (unsigned char *)malloc(horz * vert);
 
     i = matrix_coefficients;
     cr = coef[i-1][0];
     cg = coef[i-1][1];
     cb = coef[i-1][2];
 
-    if (vertical_flip == FALSE)
+    if (black_white == TRUE)
     {
-        index = 0;
+        if (vertical_flip == FALSE)
+        {
+            index = 0;
+        }
+        else
+        {
+            index = (horz * (vert - 1));
+        }
+
+        for (i = 0; i < vert; i++)
+        {
+            yp = &buffer_444Y[0] + i * horz;
+
+            for (j = 0 ; j < horz; j++)
+            {
+                /* convert to Y */
+                y = buffer_444input[index++];
+                yp[j] = (219.0 / 255.0) * y + 16.5;  /* nominal range: 16..235 */
+            }
+            if (vertical_flip)
+            {
+                index = index - (horz * 2);
+            }
+        }
     }
     else
     {
-        index = ((horz * (vert - 1)) * 3);
-    }
-
-    for (i = 0; i < vert; i++)
-    {
-        yp = &buffer_444Y[0] + i * horz;
-
-        for (j = 0 ; j < horz; j++)
+        if (vertical_flip == FALSE)
         {
-            b = buffer_444input[index++];
-            g = buffer_444input[index++];
-            r = buffer_444input[index++];
-
-            /* convert to Y */
-            y = cr * r + cg * g + cb * b;
-            yp[j] = (219.0 / 255.0) * y + 16.5;  /* nominal range: 16..235 */
+            index = 0;
         }
-        if (vertical_flip)
+        else
         {
-            index = index - (horz * 6);
+            if (bits_pixel == 32) {
+                index = ((horz * (vert - 1)) * 4);
+            }
+            else {
+                index = ((horz * (vert - 1)) * 3);
+            }
+        }
+
+        for (i = 0; i < vert; i++)
+        {
+            yp = &buffer_444Y[0] + i * horz;
+
+            for (j = 0 ; j < horz; j++)
+            {
+                b = buffer_444input[index++];
+                g = buffer_444input[index++];
+                r = buffer_444input[index++];
+                if (bits_pixel == 32) {
+                    alpha = buffer_444input[index++];
+                    if (alpha == 0) {
+                        r = g = b = 235;
+                    }
+                }
+
+                /* convert to Y */
+                y = cr * r + cg * g + cb * b;
+                yp[j] = (219.0 / 255.0) * y + 16.5;  /* nominal range: 16..235 */
+            }
+            if (vertical_flip)
+            {
+                if (bits_pixel == 32) {
+                    index = index - (horz * 8);
+                }
+                else {
+                    index = index - (horz * 6);
+                }
+            }
         }
     }
-    py = 0;
-    for (i = 0; i < (horz * vert); i++)
-    {
-        buffer_422output[i] = buffer_444Y[py++];
-    }
-    fwrite(&buffer_422output[0], 1, (horz * vert), fpout);
+    fwrite(&buffer_444Y[0], 1, (horz * vert), fpout);
+    free(buffer_444Y);
+    free(buffer_444input);
     fclose(fp);
     fclose(fpout);
     return 0;
