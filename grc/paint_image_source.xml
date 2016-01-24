@@ -4,7 +4,7 @@
   <key>paint_image_source</key>
   <category>Paint</category>
   <import>import paint</import>
-  <make>paint.image_source($image_file, $image_flip, $bt709_map, $image_invert, $autocontrast)</make>
+  <make>paint.image_source($image_file, $image_flip, $bt709_map, $image_invert, $autocontrast, $repeatmode)</make>
   <param>
     <name>Image File</name>
     <key>image_file</key>
@@ -65,6 +65,24 @@
     <option>
       <name>Yes</name>
       <key>1</key>
+    </option>
+  </param>
+  <param>
+    <name>Repeat</name>
+    <key>repeatmode</key>
+    <value>Yes</value>
+    <type>enum</type>
+    <option>
+      <name>No</name>
+      <key>0</key>
+    </option>
+    <option>
+      <name>Yes</name>
+      <key>1</key>
+    </option>
+    <option>
+      <name>Yes, with file re-read</name>
+      <key>2</key>
     </option>
   </param>
   <source>
