@@ -1,4 +1,4 @@
-# Copyright 2015 Ron Economos
+# Copyright 2015,2016 Ron Economos
 #
 # This file is part of gr-paint
 #
@@ -75,6 +75,10 @@ QT GUI Waterfall Sink.
 
 3) xhatch.bin This is a 1920x1080 test pattern with circles. Used to set
 the aspect ratio correctly.
+
+A tutorial for creating high quality images with Gqrx is available here:
+
+https://gist.github.com/drmpeg/31a9a7dd6918856aeb60
 
 UPDATE: Chris Kuethe KJ6GVE has submitted an "Image File Source" block
 that allows any image format to be used and avoids the extra steps of
