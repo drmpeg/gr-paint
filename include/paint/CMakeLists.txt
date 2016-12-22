@@ -22,5 +22,6 @@
 ########################################################################
 install(FILES
     api.h
+    paint_config.h
     paint_bc.h DESTINATION include/paint
 )
