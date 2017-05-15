@@ -29,15 +29,15 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     set(LINUX TRUE)
 endif()
 
-if(LINUX AND EXISTS "/etc/debian_version")
+if(NOT CMAKE_CROSSCOMPILING AND LINUX AND EXISTS "/etc/debian_version")
     set(DEBIAN TRUE)
 endif()
 
-if(LINUX AND EXISTS "/etc/redhat-release")
+if(NOT CMAKE_CROSSCOMPILING AND LINUX AND EXISTS "/etc/redhat-release")
     set(REDHAT TRUE)
 endif()
 
-if(LINUX AND EXISTS "/etc/slackware-version")
+if(NOT CMAKE_CROSSCOMPILING AND LINUX AND EXISTS "/etc/slackware-version")
     set(SLACKWARE TRUE)
 endif()
 
@@ -51,4 +51,12 @@ endif()
 if(NOT DEFINED LIB_SUFFIX AND LIB64_CONVENTION AND CMAKE_SYSTEM_PROCESSOR MATCHES "64$")
     set(LIB_SUFFIX 64)
 endif()
+
+########################################################################
+# Detect /lib versus /lib64
+########################################################################
+if (CMAKE_INSTALL_LIBDIR MATCHES lib64)
+    set(LIB_SUFFIX 64)
+endif()
+
 set(LIB_SUFFIX ${LIB_SUFFIX} CACHE STRING "lib directory suffix")
