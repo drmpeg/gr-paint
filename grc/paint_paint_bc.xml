@@ -2,7 +2,7 @@
 <block>
   <name>Spectrum Painter</name>
   <key>paint_paint_bc</key>
-  <category>Paint</category>
+  <category>[Paint]</category>
   <import>import paint</import>
   <make>paint.paint_bc($width, $repeats, $equalization.val, $randomsrc.val, $randomsrc.ports)</make>
   <param>

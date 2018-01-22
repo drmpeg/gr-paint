@@ -2,7 +2,7 @@
 <block>
   <name>Image File Source</name>
   <key>paint_image_source</key>
-  <category>Paint</category>
+  <category>[Paint]</category>
   <import>import paint</import>
   <make>paint.image_source($image_file, $image_flip, $bt709_map, $image_invert, $autocontrast, $repeatmode)</make>
   <param>
