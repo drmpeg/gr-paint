@@ -86,9 +86,10 @@ class image_source(gr.sync_block):
 		if self.bt709_map:
 			# scale brightness according to ITU-R BT.709
 			self.image_data = map( lambda x: x * 219 / 255 + 16,  self.image_data)
+			self.image_data = list(self.image_data)
 		self.image_len = len(self.image_data)
 		if self.repeatmode != 2:
-			print "paint.image_source: %d bytes, %dpx width" % (self.image_len, self.image_width)
+			print ("paint.image_source: %d bytes, %dpx width" % (self.image_len, self.image_width))
 		self.line_num = 0
 
 	def work(self, input_items, output_items):

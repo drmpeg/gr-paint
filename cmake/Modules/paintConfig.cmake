@@ -22,9 +22,10 @@ FIND_LIBRARY(
           /usr/local/lib64
           /usr/lib
           /usr/lib64
-)
+          )
+
+include("${CMAKE_CURRENT_LIST_DIR}/paintTarget.cmake")
 
 INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(PAINT DEFAULT_MSG PAINT_LIBRARIES PAINT_INCLUDE_DIRS)
 MARK_AS_ADVANCED(PAINT_LIBRARIES PAINT_INCLUDE_DIRS)
-

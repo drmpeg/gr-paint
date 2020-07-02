@@ -2,7 +2,7 @@
 
 #define PAINT_API
 
-%include "gnuradio.i"			// the common stuff
+%include "gnuradio.i"           // the common stuff
 
 //load generated python docstrings
 %include "paint_swig_doc.i"
@@ -11,7 +11,6 @@
 #include "paint/paint_bc.h"
 #include "paint/paint_config.h"
 %}
-
 
 %include "paint/paint_bc.h"
 %include "paint/paint_config.h"
