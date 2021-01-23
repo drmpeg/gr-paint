@@ -1,4 +1,4 @@
-# Copyright 2015,2016 Ron Economos
+# Copyright 2015,2016,2021 Ron Economos
 #
 # This file is part of gr-paint
 #
@@ -105,6 +105,12 @@ Build instructions:
     make
     sudo make install
     sudo ldconfig
+
+Note: cmake ../ will install into the default directory /usr/local. If
+you've installed GNU Radio with a package manager like apt, then gr-paint
+should be installed in /usr. To accomplish this, use:
+
+cmake -DCMAKE_INSTALL_PREFIX=/usr ../
 
 Contributions are welcome!
 
