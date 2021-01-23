@@ -115,7 +115,7 @@ blocks:
     bus_structure: null
     coordinate: [968, 368.0]
     rotation: 0
-    state: true
+    state: enabled
 - name: blocks_stream_to_vector_0
   id: blocks_stream_to_vector
   parameters:
@@ -152,7 +152,7 @@ blocks:
     bus_structure: null
     coordinate: [752, 364.0]
     rotation: 0
-    state: true
+    state: enabled
 - name: blocks_vector_to_stream_0
   id: blocks_vector_to_stream
   parameters:
@@ -515,7 +515,7 @@ blocks:
     clock_source6: ''
     clock_source7: ''
     comment: ''
-    dev_addr: '"send_frame_size=65536,num_send_frames=128,master_clock_rate=" + str(samp_rate*4)'
+    dev_addr: '"send_frame_size=8192,num_send_frames=128,master_clock_rate=" + str(samp_rate*4)'
     dev_args: '""'
     gain0: tx_gain
     gain1: '0'
