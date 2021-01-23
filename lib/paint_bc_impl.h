@@ -38,7 +38,7 @@ namespace gr {
       int random_source;
       int equalization_enable;
       gr_complex m_point[1];
-      fft::fft_complex *ofdm_fft;
+      fft::fft_complex_rev ofdm_fft;
       int ofdm_fft_size;
       float normalization;
       float magnitude_line[4096];

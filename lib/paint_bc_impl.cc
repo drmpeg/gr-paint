@@ -43,7 +43,8 @@ namespace gr {
     paint_bc_impl::paint_bc_impl(int width, int repeats, int equalization, int randomsrc, int inputs)
       : gr::block("paint_bc",
               gr::io_signature::make(inputs, inputs, sizeof(unsigned char)),
-              gr::io_signature::make(1, 1, sizeof(gr_complex)))
+              gr::io_signature::make(1, 1, sizeof(gr_complex))),
+        ofdm_fft(4096, 1)
     {
         double x, sinc, fs = 2000000.0;
         double fstep, f = 0.0;
@@ -52,7 +53,6 @@ namespace gr {
         random_source = randomsrc;
         equalization_enable = equalization;
         ofdm_fft_size = 4096;
-        ofdm_fft = new fft::fft_complex(ofdm_fft_size, false, 1);
         normalization = 0.000001;
         pixel_repeat = ofdm_fft_size / image_width;
         int nulls = ofdm_fft_size - (image_width * pixel_repeat);
@@ -86,7 +86,6 @@ namespace gr {
      */
     paint_bc_impl::~paint_bc_impl()
     {
-        delete ofdm_fft;
     }
 
     void
@@ -173,11 +172,11 @@ namespace gr {
                 {
                     volk_32fc_x2_multiply_32fc(out, out, inverse_sinc, ofdm_fft_size);
                 }
-                dst = ofdm_fft->get_inbuf();
+                dst = ofdm_fft.get_inbuf();
                 memcpy(&dst[ofdm_fft_size / 2], &out[0], sizeof(gr_complex) * ofdm_fft_size / 2);
                 memcpy(&dst[0], &out[ofdm_fft_size / 2], sizeof(gr_complex) * ofdm_fft_size / 2);
-                ofdm_fft->execute();
-                volk_32fc_s32fc_multiply_32fc(out, ofdm_fft->get_outbuf(), normalization, ofdm_fft_size);
+                ofdm_fft.execute();
+                volk_32fc_s32fc_multiply_32fc(out, ofdm_fft.get_outbuf(), normalization, ofdm_fft_size);
                 out += ofdm_fft_size;
             }
         }
