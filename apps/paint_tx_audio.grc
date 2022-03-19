@@ -319,7 +319,7 @@ blocks:
     showports: 'True'
     type: float
     update_time: '0.1'
-    wintype: firdes.WIN_RECTANGULAR
+    wintype: window.WIN_RECTANGULAR
   states:
     bus_sink: false
     bus_source: false
