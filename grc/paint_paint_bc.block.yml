@@ -25,7 +25,7 @@ parameters:
     dtype: enum
     options: [INTERNAL, EXTERNAL]
     option_attributes:
-        ports: ['1', '2']
+        ports: [1, 2]
         val: [paint.INTERNAL, paint.EXTERNAL]
     hide: part
 
