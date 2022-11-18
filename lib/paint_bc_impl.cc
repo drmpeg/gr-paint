@@ -105,7 +105,13 @@ namespace gr {
                        gr_vector_void_star &output_items)
     {
         const unsigned char *in = (const unsigned char *) input_items[0];
-        const unsigned char *in_rand = (const unsigned char *) input_items[1];
+        const unsigned char *in_rand = nullptr;
+
+        if (random_source == EXTERNAL)
+        {
+            in_rand = (const unsigned char *) input_items[1];
+        }
+
         gr_complex *out = (gr_complex *) output_items[0];
         int consumed = 0;
         int consumed_rand = 0;
