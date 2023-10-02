@@ -24,6 +24,8 @@
 #include <paint/paint_bc.h>
 #include <gnuradio/fft/fft.h>
 
+#define OFDM_FFT_SIZE 4096
+
 namespace gr {
   namespace paint {
 
@@ -41,11 +43,11 @@ namespace gr {
       fft::fft_complex_rev ofdm_fft;
       int ofdm_fft_size;
       float normalization;
-      float magnitude_line[4096];
-      float angle_line[4096];
-      float angle_cos[4096];
-      float angle_sin[4096];
-      gr_complex inverse_sinc[4096];
+      float magnitude_line[OFDM_FFT_SIZE];
+      float angle_line[OFDM_FFT_SIZE];
+      float angle_cos[OFDM_FFT_SIZE];
+      float angle_sin[OFDM_FFT_SIZE];
+      gr_complex inverse_sinc[OFDM_FFT_SIZE];
 
      public:
       paint_bc_impl(int width, int repeats, int equalization, int randomsrc, int inputs);

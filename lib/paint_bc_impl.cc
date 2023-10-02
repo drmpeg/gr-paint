@@ -44,7 +44,7 @@ namespace gr {
       : gr::block("paint_bc",
               gr::io_signature::make(inputs, inputs, sizeof(unsigned char)),
               gr::io_signature::make(1, 1, sizeof(gr_complex))),
-        ofdm_fft(4096, 1)
+        ofdm_fft(OFDM_FFT_SIZE, 1)
     {
         double x, sinc, fs = 2000000.0;
         double fstep, f = 0.0;
@@ -52,7 +52,7 @@ namespace gr {
         image_width = width;
         random_source = randomsrc;
         equalization_enable = equalization;
-        ofdm_fft_size = 4096;
+        ofdm_fft_size = OFDM_FFT_SIZE;
         normalization = 0.000001;
         pixel_repeat = ofdm_fft_size / image_width;
         int nulls = ofdm_fft_size - (image_width * pixel_repeat);
