@@ -182,7 +182,7 @@ namespace gr {
                 memcpy(&dst[ofdm_fft_size / 2], &out[0], sizeof(gr_complex) * ofdm_fft_size / 2);
                 memcpy(&dst[0], &out[ofdm_fft_size / 2], sizeof(gr_complex) * ofdm_fft_size / 2);
                 ofdm_fft.execute();
-                volk_32fc_s32fc_multiply_32fc(out, ofdm_fft.get_outbuf(), normalization, ofdm_fft_size);
+                volk_32f_s32f_multiply_32f(reinterpret_cast<float*>(out), reinterpret_cast<float*>(ofdm_fft.get_outbuf()), normalization, ofdm_fft_size * 2);
                 out += ofdm_fft_size;
             }
         }
