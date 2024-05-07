@@ -153,6 +153,7 @@ add_custom_target(uninstall
 add_subdirectory(include/paint)
 add_subdirectory(lib)
 add_subdirectory(apps)
+add_subdirectory(examples)
 add_subdirectory(docs)
 # NOTE: manually update below to use GRC to generate C++ flowgraphs w/o python
 if(ENABLE_PYTHON)
@@ -170,3 +171,7 @@ endif(ENABLE_PYTHON)
 install(FILES cmake/Modules/paintConfig.cmake
     DESTINATION ${CMAKE_MODULES_DIR}/paint
 )
+
+install(FILES MANIFEST.yml
+    RENAME MANIFEST-${VERSION_MAJOR}.${VERSION_API}.${VERSION_ABI}${VERSION_PATCH}.yml
+    DESTINATION share/gnuradio/manifests/paint)
