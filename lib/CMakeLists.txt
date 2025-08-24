@@ -9,7 +9,7 @@
 ########################################################################
 # Setup library
 ########################################################################
-include(GrPlatform) #define LIB_SUFFIX
+include(GNUInstallDirs)
 
 list(APPEND paint_sources
     paint_bc_impl.cc
@@ -25,7 +25,7 @@ add_library(gnuradio-paint SHARED ${paint_sources})
 target_link_libraries(gnuradio-paint gnuradio::gnuradio-runtime gnuradio::gnuradio-fft)
 target_include_directories(gnuradio-paint
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>
-    PUBLIC $<INSTALL_INTERFACE:include>
+    PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
   )
 set_target_properties(gnuradio-paint PROPERTIES DEFINE_SYMBOL "gnuradio_paint_EXPORTS")
 
